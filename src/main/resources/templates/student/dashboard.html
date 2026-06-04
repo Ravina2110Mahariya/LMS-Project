@@ -1,0 +1,134 @@
+<div class="container-fluid mt-4">
+
+    <div class="row">
+
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4">
+            <div th:replace="~{fragments/sidebar :: studentSidebar}"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="col-lg-9 col-md-8">
+
+            <h2 class="mb-4">
+                Welcome,
+                <span th:text="${username}">Student</span>
+            </h2>
+
+            <!-- Dashboard Cards -->
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white shadow">
+                        <div class="card-body text-center">
+                            <h3 th:text="${totalCourses}">0</h3>
+                            <p class="mb-0">Courses</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card bg-success text-white shadow">
+                        <div class="card-body text-center">
+                            <h3 th:text="${completedCourses}">0</h3>
+                            <p class="mb-0">Completed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card bg-warning shadow">
+                        <div class="card-body text-center">
+                            <h3 th:text="${pendingAssignments}">0</h3>
+                            <p class="mb-0">Assignments</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white shadow">
+                        <div class="card-body text-center">
+                            <h3 th:text="${certificateCount}">0</h3>
+                            <p class="mb-0">Certificates</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Recent Courses -->
+            <div class="card mt-4 shadow">
+
+                <div class="card-header bg-dark text-white">
+                    My Courses
+                </div>
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover">
+
+                            <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Instructor</th>
+                                <th>Progress</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+                            <tr th:each="course : ${courses}">
+
+                                <td th:text="${course.title}">
+                                    Java Programming
+                                </td>
+
+                                <td th:text="${course.instructorName}">
+                                    Instructor
+                                </td>
+
+                                <td width="250">
+
+                                    <div class="progress">
+
+                                        <div class="progress-bar bg-success"
+                                             role="progressbar"
+                                             th:style="'width:' + ${course.progress} + '%'">
+
+                                            <span th:text="${course.progress} + '%'"></span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    <a th:href="@{/student/course/{id}(id=${course.id})}"
+                                       class="btn btn-primary btn-sm">
+                                        Continue
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
