@@ -34,6 +34,11 @@ A Learning Management System (LMS) built using Spring Boot and MongoDB.
 * JUnit 5
 * Mockito
 * Maven
+* rest-api
+* bootstrap
+* lms
+* learning-management-system
+
 
 ## API Documentation
 
