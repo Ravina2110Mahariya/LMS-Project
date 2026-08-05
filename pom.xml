@@ -84,6 +84,13 @@
     <scope>runtime</scope>
     <optional>true</optional>
 </dependency>
+
+<!-- Excel-->
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml</artifactId>
+    <version>5.2.5</version>
+</dependency>
    
    <!-- 📄 PDF (iText 7) -->
 <dependency>
@@ -91,6 +98,12 @@
     <artifactId>itext7-core</artifactId>
     <version>8.0.3</version>
     <type>pom</type>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.pdfbox</groupId>
+    <artifactId>pdfbox</artifactId>
+    <version>3.0.2</version>
 </dependency>
 
 <!-- Swagger OpenAPI -->
@@ -116,6 +129,11 @@
     <groupId>com.razorpay</groupId>
     <artifactId>razorpay-java</artifactId>
     <version>1.4.3</version>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-mongodb</artifactId>
 </dependency>
 
     <!-- ✅ Validation -->

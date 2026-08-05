@@ -13,15 +13,36 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AssignmentService {
 
-    private final AssignmentRepository repo;
+    private final AssignmentRepository assignmentRepository;
 
-    // ✅ Add Assignment
-    public Assignment addAssignment(Assignment assignment) {
-        return repo.save(assignment);
+    // Save Assignment
+    public Assignment save(Assignment assignment) {
+        return assignmentRepository.save(assignment);
     }
 
-    // ✅ Get Assignments by Course
+    // Get All Assignments
+    public List<Assignment> getAll() {
+        return assignmentRepository.findAll();
+    }
+
+    // Student Assignments
+    public List<Assignment> getAllAssignments() {
+        return assignmentRepository.findAll();
+    }
+
+    // Course Wise Assignment
     public List<Assignment> getByCourse(String courseId) {
-        return repo.findByCourseId(courseId);
+        return assignmentRepository.findByCourseId(courseId);
     }
+
+    // Get Assignment By Id
+    public Assignment getById(String id) {
+        return assignmentRepository.findById(id).orElse(null);
+    }
+
+    // Delete Assignment
+    public void delete(String id) {
+        assignmentRepository.deleteById(id);
+    }
+
 }

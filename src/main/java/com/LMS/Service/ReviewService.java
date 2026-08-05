@@ -18,18 +18,14 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
 
-    // =========================
     // ADD / UPDATE REVIEW
-    // =========================
     public Review addReview(Review review) {
 
         Optional<Review> existingReview =
                 reviewRepository.findByCourseIdAndStudentEmail(
                         review.getCourseId(),
-                        review.getStudentEmail()
-                );
+                        review.getStudentEmail());
 
-        // 🔥 If already exists → UPDATE
         if (existingReview.isPresent()) {
 
             Review oldReview = existingReview.get();
@@ -41,53 +37,52 @@ public class ReviewService {
             return reviewRepository.save(oldReview);
         }
 
-        // NEW REVIEW
         review.setCreatedAt(LocalDateTime.now());
         return reviewRepository.save(review);
     }
 
-    // =========================
-    // GET COURSE REVIEWS (DTO RESPONSE)
-    // =========================
+    // GET COURSE REVIEWS
     public List<ReviewResponseDTO> getReviewsByCourse(String courseId) {
 
-        List<Review> reviews =
-                reviewRepository.findByCourseId(courseId);
-
-        return reviews.stream()
+        return reviewRepository.findByCourseId(courseId)
+                .stream()
                 .map(review -> new ReviewResponseDTO(
                         review.getStudentEmail(),
                         review.getCourseId(),
                         review.getRating(),
                         review.getComment(),
-                        review.getCreatedAt()
-                ))
+                        review.getCreatedAt()))
                 .toList();
     }
 
-    // =========================
-    // GET AVERAGE RATING
-    // =========================
+    // AVERAGE RATING
     public double getAverageRating(String courseId) {
 
         List<Review> reviews =
                 reviewRepository.findByCourseId(courseId);
 
         if (reviews.isEmpty()) {
-            return 0.0;
+            return 0;
         }
 
-        double sum = reviews.stream()
+        return reviews.stream()
                 .mapToInt(Review::getRating)
-                .sum();
-
-        return sum / reviews.size();
+                .average()
+                .orElse(0);
     }
- // =========================
- //   Review deleted successfully
- // =========================
-    public void deleteReview(String reviewId) {
 
+    // GET ALL
+    public List<Review> getAll() {
+        return reviewRepository.findAll();
+    }
+
+    // DELETE
+    public void delete(String id) {
+        reviewRepository.deleteById(id);
+    }
+
+    // DELETE (Old Method)
+    public void deleteReview(String reviewId) {
         reviewRepository.deleteById(reviewId);
     }
 }

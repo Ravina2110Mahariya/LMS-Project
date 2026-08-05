@@ -17,9 +17,6 @@ public class DashboardController {
 
     private final DashboardService service;
 
-    // =========================
-    // STUDENT DASHBOARD
-    // =========================
     @GetMapping("/student")
     public ResponseEntity<?> studentDashboard() {
 

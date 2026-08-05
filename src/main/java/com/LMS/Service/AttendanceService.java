@@ -15,24 +15,53 @@ public class AttendanceService {
 
     private final AttendanceRepository repo;
 
-    // MARK ATTENDANCE
-    public Attendance markAttendance(
-            Attendance attendance) {
-
+    // =========================
+    // SAVE / MARK ATTENDANCE
+    // =========================
+    public Attendance save(Attendance attendance) {
         return repo.save(attendance);
     }
 
-    // STUDENT ATTENDANCE
-    public List<Attendance> myAttendance(
-            String email) {
+    public Attendance markAttendance(Attendance attendance) {
+        return repo.save(attendance);
+    }
 
+    // =========================
+    // GET ALL
+    // =========================
+    public List<Attendance> getAll() {
+        return repo.findAll();
+    }
+
+    // =========================
+    // GET BY ID
+    // =========================
+    public Attendance getById(String id) {
+
+        return repo.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Attendance Not Found"));
+    }
+
+    // =========================
+    // DELETE
+    // =========================
+    public void delete(String id) {
+        repo.deleteById(id);
+    }
+
+    // =========================
+    // STUDENT ATTENDANCE
+    // =========================
+    public List<Attendance> myAttendance(String email) {
         return repo.findByStudentEmail(email);
     }
 
+    // =========================
     // COURSE ATTENDANCE
-    public List<Attendance> courseAttendance(
-            String courseId) {
-
+    // =========================
+    public List<Attendance> courseAttendance(String courseId) {
         return repo.findByCourseId(courseId);
     }
+
 }

@@ -21,7 +21,7 @@ public interface EnrollmentRepository
             String courseId
     );
 
-    
+
     List<Enrollment> findByStudentEmail(
             String studentEmail
     );

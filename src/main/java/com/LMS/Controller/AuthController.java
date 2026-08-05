@@ -2,7 +2,14 @@ package com.LMS.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.LMS.Entity.User;
 import com.LMS.Service.UserService;
@@ -11,13 +18,13 @@ import com.LMS.dto.AuthResponse;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*") // ✅ frontend ke liye helpful
+@CrossOrigin(origins = "*") //  frontend ke liye helpful
 public class AuthController {
 
     @Autowired
     private UserService service;
 
-    // ✅ REGISTER
+    //  REGISTER
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
@@ -28,7 +35,7 @@ public class AuthController {
         }
     }
 
-    // ✅ LOGIN
+    //  LOGIN
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         try {
@@ -40,5 +47,13 @@ public class AuthController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+    
+    @GetMapping("/encode")
+    @ResponseBody
+    public String encode() {
+
+        return new BCryptPasswordEncoder()
+                .encode("123456");
     }
 }

@@ -1,14 +1,8 @@
 package com.LMS.Service;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.LMS.Entity.VideoLecture;
 import com.LMS.Repository.VideoRepository;
@@ -19,60 +13,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VideoService {
 
-    private final VideoRepository repo;
+    private final VideoRepository repository;
 
-    private static final String UPLOAD_DIR =
-            "uploads/videos/";
+    public VideoLecture save(VideoLecture video) {
 
-    // UPLOAD VIDEO
-    public VideoLecture upload(
-            String title,
-            String courseId,
-            String uploadedBy,
-            MultipartFile file)
-            throws IOException {
-
-        // CREATE FOLDER
-        File folder = new File(UPLOAD_DIR);
-
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-
-        // FILE NAME
-        String fileName =
-                System.currentTimeMillis()
-                + "_"
-                + file.getOriginalFilename();
-
-        // FULL PATH
-        Path path = Paths.get(
-                UPLOAD_DIR + fileName
-        );
-
-        // SAVE FILE
-        Files.copy(
-                file.getInputStream(),
-                path
-        );
-
-        // SAVE DB
-        VideoLecture video =
-                new VideoLecture();
-
-        video.setTitle(title);
-        video.setCourseId(courseId);
-        video.setUploadedBy(uploadedBy);
-        video.setVideoName(fileName);
-        video.setVideoPath(path.toString());
-
-        return repo.save(video);
+        return repository.save(video);
     }
 
-    // GET COURSE VIDEOS
-    public List<VideoLecture>
-    getByCourse(String courseId) {
+    public List<VideoLecture> getAll() {
 
-        return repo.findByCourseId(courseId);
+        return repository.findAll();
     }
+
+    public List<VideoLecture> getByCourse(String courseId) {
+
+        return repository.findByCourseId(courseId);
+    }
+    
+    public VideoLecture getById(String id) {
+
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Video Not Found"));
+    }
+
+    public void delete(String id) {
+
+        repository.deleteById(id);
+    }
+
 }

@@ -9,6 +9,6 @@ import com.LMS.Entity.VideoLecture;
 public interface VideoRepository
         extends MongoRepository<VideoLecture, String> {
 
-    List<VideoLecture>
-    findByCourseId(String courseId);
+    List<VideoLecture> findByCourseId(String courseId);
+
 }

@@ -1,7 +1,5 @@
 package com.LMS.Entity;
 
-import java.time.LocalDateTime;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,14 +11,13 @@ public class Certificate {
 
     private String userId;
 
-    // ✅ NEW FIELD
     private String studentEmail;
 
     private String courseId;
 
     private String certificateNumber;
 
-    private LocalDateTime generatedAt;
+    private String issueDate;
 
     public Certificate() {
     }
@@ -31,15 +28,19 @@ public class Certificate {
             String studentEmail,
             String courseId,
             String certificateNumber,
-            LocalDateTime generatedAt) {
+            String issueDate) {
 
         this.id = id;
         this.userId = userId;
         this.studentEmail = studentEmail;
         this.courseId = courseId;
         this.certificateNumber = certificateNumber;
-        this.generatedAt = generatedAt;
+        this.issueDate = issueDate;
     }
+
+    // =========================
+    // ID
+    // =========================
 
     public String getId() {
         return id;
@@ -48,6 +49,10 @@ public class Certificate {
     public void setId(String id) {
         this.id = id;
     }
+
+    // =========================
+    // USER ID
+    // =========================
 
     public String getUserId() {
         return userId;
@@ -60,43 +65,49 @@ public class Certificate {
     // =========================
     // STUDENT EMAIL
     // =========================
+
     public String getStudentEmail() {
         return studentEmail;
     }
 
-    public void setStudentEmail(
-            String studentEmail) {
-
+    public void setStudentEmail(String studentEmail) {
         this.studentEmail = studentEmail;
     }
+
+    // =========================
+    // COURSE ID
+    // =========================
 
     public String getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(
-            String courseId) {
-
+    public void setCourseId(String courseId) {
         this.courseId = courseId;
     }
+
+    // =========================
+    // CERTIFICATE NUMBER
+    // =========================
 
     public String getCertificateNumber() {
         return certificateNumber;
     }
 
-    public void setCertificateNumber(
-            String certificateNumber) {
-
+    public void setCertificateNumber(String certificateNumber) {
         this.certificateNumber = certificateNumber;
     }
 
-    public LocalDateTime getGeneratedAt() {
-        return generatedAt;
+    // =========================
+    // ISSUE DATE
+    // =========================
+
+    public String getIssueDate() {
+        return issueDate;
     }
 
-    public void setGeneratedAt(
-            LocalDateTime generatedAt) {
-
-        this.generatedAt = generatedAt;
+    public void setIssueDate(String issueDate) {
+        this.issueDate = issueDate;
     }
 }
+

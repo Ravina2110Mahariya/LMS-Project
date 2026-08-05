@@ -1,14 +1,17 @@
 package com.LMS.Security;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
@@ -19,7 +22,7 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
-    // ✅ Generate token with ROLE
+    // Generate token with ROLE
     public String generateToken(String email, String role) {
 
         Map<String, Object> claims = new HashMap<>();
@@ -34,29 +37,29 @@ public class JwtUtil {
                 .compact();
     }
 
-    // ✅ Extract email
+    // Extract email
     public String extractEmail(String token) {
         return extractAllClaims(token).getSubject();
     }
 
-    // ✅ Extract role (optional use)
+    // Extract role (optional use)
     public String extractRole(String token) {
         return (String) extractAllClaims(token).get("role");
     }
 
-    // ✅ Validate token
+    //  Validate token
     public boolean validateToken(String token, String email) {
         return extractEmail(token).equals(email) && !isTokenExpired(token);
     }
 
-    // ✅ Expiry check
+    //  Expiry check
     private boolean isTokenExpired(String token) {
         return extractAllClaims(token)
                 .getExpiration()
                 .before(new Date());
     }
 
-    // ✅ Common method
+    //  Common method
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())

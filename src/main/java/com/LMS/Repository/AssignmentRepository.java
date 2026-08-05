@@ -9,4 +9,5 @@ import com.LMS.Entity.Assignment;
 public interface AssignmentRepository extends MongoRepository<Assignment, String> {
 
     List<Assignment> findByCourseId(String courseId);
+
 }

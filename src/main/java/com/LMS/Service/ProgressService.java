@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.LMS.Entity.Progress;
 import com.LMS.Entity.User;
+import com.LMS.Repository.CertificateRepository;
 import com.LMS.Repository.ProgressRepository;
 import com.LMS.Repository.UserRepository;
 
@@ -18,13 +19,15 @@ public class ProgressService {
     private final ProgressRepository progressRepo;
     private final UserRepository userRepo;
 
-    // ✅ ADD PROGRESS
-    public Progress addProgress(Progress progress) {
+    private final CertificateRepository certificateRepo;
+    private final CertificateService certificateService;
 
+    // ADD PROGRESS
+    public Progress addProgress(Progress progress) {
         return progressRepo.save(progress);
     }
 
-    // ✅ GET MY PROGRESS
+    // GET MY PROGRESS
     public List<Progress> getMyProgress(String email) {
 
         User user = userRepo.findByEmail(email)
@@ -34,23 +37,22 @@ public class ProgressService {
         return progressRepo.findByUserId(user.getId());
     }
 
-    // ✅ UPDATE PROGRESS BY ID
-    public Progress updateProgress(String id,
-                                   Progress updatedProgress) {
+    // UPDATE PROGRESS BY ID
+    public Progress updateProgress(
+            String id,
+            Progress updatedProgress) {
 
-        Progress existing = progressRepo.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Progress not found"));
+        Progress existing =
+                progressRepo.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException("Progress not found"));
 
         existing.setCompletedLessons(
-                updatedProgress.getCompletedLessons()
-        );
+                updatedProgress.getCompletedLessons());
 
         existing.setTotalLessons(
-                updatedProgress.getTotalLessons()
-        );
+                updatedProgress.getTotalLessons());
 
-        // ✅ CALCULATE %
         double percent =
                 (existing.getCompletedLessons() * 100.0)
                         / existing.getTotalLessons();
@@ -60,45 +62,88 @@ public class ProgressService {
         return progressRepo.save(existing);
     }
 
-    // ✅ AUTO UPDATE USING JWT
-    public Progress updateProgress(String email,
-                                   String courseId) {
+    // AUTO UPDATE USING JWT
+    public Progress updateProgress(
+            String email,
+            String courseId) {
 
-        // ✅ USER FIND
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() ->
                         new RuntimeException("User not found"));
 
-        // ✅ EXISTING PROGRESS CHECK
-        Progress progress = progressRepo
-                .findByUserIdAndCourseId(
+        Progress progress =
+                progressRepo.findByUserIdAndCourseId(
                         user.getId(),
-                        courseId
-                )
-                .orElse(new Progress());
+                        courseId)
+                        .orElse(new Progress());
 
-        // ✅ SET DATA
         progress.setUserId(user.getId());
         progress.setCourseId(courseId);
 
-        // ✅ UPDATE LESSON COUNT
         progress.setCompletedLessons(
-                progress.getCompletedLessons() + 1
-        );
+                progress.getCompletedLessons() + 1);
 
-        // ✅ DEFAULT TOTAL LESSONS
         if (progress.getTotalLessons() == 0) {
             progress.setTotalLessons(10);
         }
 
-        // ✅ CALCULATE %
         double percent =
                 (progress.getCompletedLessons() * 100.0)
                         / progress.getTotalLessons();
 
         progress.setPercentage(percent);
 
-        // ✅ SAVE
+        if (progress.getPercentage() >= 100) {
+
+            boolean alreadyExists =
+                    certificateRepo
+                            .findByStudentEmail(email)
+                            .stream()
+                            .anyMatch(c ->
+                                    c.getCourseId()
+                                            .equals(courseId));
+
+            if (!alreadyExists) {
+
+                certificateService.generateCertificate(
+                        email,
+                        courseId);
+            }
+        }
+
         return progressRepo.save(progress);
     }
+ // =========================
+ // GET ALL
+ // =========================
+ public List<Progress> getAll() {
+
+     return progressRepo.findAll();
+ }
+
+ // =========================
+ // GET BY ID
+ // =========================
+ public Progress getById(String id) {
+
+     return progressRepo.findById(id)
+             .orElseThrow(() ->
+                     new RuntimeException("Progress Not Found"));
+ }
+
+ // =========================
+ // SAVE
+ // =========================
+ public Progress save(Progress progress) {
+
+     return progressRepo.save(progress);
+ }
+
+ // =========================
+ // DELETE
+ // =========================
+ public void delete(String id) {
+
+     progressRepo.deleteById(id);
+ }
 }

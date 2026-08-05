@@ -1,14 +1,26 @@
 package com.LMS.Controller;
 
 import java.io.File;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.LMS.Entity.CourseContent;
@@ -16,7 +28,7 @@ import com.LMS.Service.CourseContentService;
 
 import lombok.RequiredArgsConstructor;
 
-@RestController
+@Controller
 @RequestMapping("/content")
 @RequiredArgsConstructor
 public class CourseContentController {
@@ -34,6 +46,28 @@ public class CourseContentController {
                 service.addContent(c)
         );
     }
+    
+     // =========================
+    // COURSE CONTENT courseId
+    // =========================
+    @GetMapping("/student/course-content/{courseId}")
+    public String studentCourseContent(
+            @PathVariable String courseId,
+            org.springframework.ui.Model model) {
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        List<CourseContent> contents =
+                service.getContent(courseId, email);
+
+        model.addAttribute("contents", contents);
+        model.addAttribute("courseId", courseId);
+
+        return "student/course-content";
+    }
 
     // =========================
     // UPLOAD FILE
@@ -47,10 +81,15 @@ public class CourseContentController {
             @RequestParam MultipartFile file
 
     ) {
+    	System.out.println("========= UPLOAD HIT =========");
+
+    	System.out.println("COURSE ID = " + courseId);
+    	System.out.println("TITLE = " + title);
+    	System.out.println("TYPE = " + type);
+    	System.out.println("FILE = " + file.getOriginalFilename());
 
         try {
 
-            // EMPTY FILE CHECK
             if (file.isEmpty()) {
 
                 return ResponseEntity
@@ -58,42 +97,34 @@ public class CourseContentController {
                         .body("File is empty");
             }
 
-            // FOLDER SELECT
             String folder = "uploads/" +
 
                     ("PDF".equalsIgnoreCase(type)
                             ? "pdfs/"
                             : "videos/");
 
-            // CREATE FOLDER
             File dir = new File(folder);
 
             if (!dir.exists()) {
                 dir.mkdirs();
             }
 
-            // ORIGINAL FILE NAME
             String originalFileName =
                     file.getOriginalFilename();
 
-            // REMOVE SPACES
             originalFileName =
                     originalFileName.replaceAll(" ", "_");
 
-            // UNIQUE FILE NAME
             String fileName =
                     System.currentTimeMillis()
                             + "_"
                             + originalFileName;
 
-            // SAVE PATH
             Path path =
                     Paths.get(folder, fileName);
 
-            // SAVE FILE
             Files.write(path, file.getBytes());
 
-            // SAVE DB
             CourseContent content =
                     new CourseContent();
 
@@ -101,10 +132,14 @@ public class CourseContentController {
             content.setTitle(title);
             content.setType(type);
 
-            // SAVE FILE URL
-            content.setFileUrl(fileName);
+            // FINAL FILE URL
+            content.setFileUrl(
+                    "/content/download/"
+                            + type.toLowerCase()
+                            + "/"
+                            + fileName
+            );
 
-            // SAVE ORIGINAL NAME
             content.setFileName(originalFileName);
 
             return ResponseEntity.ok(
@@ -112,6 +147,8 @@ public class CourseContentController {
             );
 
         } catch (Exception e) {
+
+            e.printStackTrace();
 
             return ResponseEntity
                     .badRequest()
@@ -150,45 +187,38 @@ public class CourseContentController {
 
     ) {
 
+        System.out.println("===== DOWNLOAD HIT =====");
+        System.out.println("TYPE = " + type);
+        System.out.println("FILE = " + fileName);
+
+        Authentication auth =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        System.out.println("USER = " + auth.getName());
+        System.out.println("ROLES = " + auth.getAuthorities());
+
         try {
 
-            // DEBUG
-            System.out.println("TYPE: " + type);
-            System.out.println("FILE: " + fileName);
-
-            // SELECT FOLDER
             String folder = "uploads/" +
-
                     ("pdf".equalsIgnoreCase(type)
                             ? "pdfs/"
                             : "videos/");
 
-            // FILE PATH
             Path filePath =
                     Paths.get(folder)
                             .resolve(fileName)
                             .normalize();
 
-            System.out.println(
-                    "PATH: "
-                            + filePath.toAbsolutePath()
-            );
-
-            // RESOURCE
             Resource resource =
                     new UrlResource(filePath.toUri());
 
-            // FILE EXISTS CHECK
             if (!resource.exists()) {
-
-                System.out.println("FILE NOT FOUND");
 
                 return ResponseEntity
                         .notFound()
                         .build();
             }
 
-            // CONTENT TYPE
             String contentType =
                     Files.probeContentType(filePath);
 
@@ -198,20 +228,15 @@ public class CourseContentController {
                         "application/octet-stream";
             }
 
-            // RETURN FILE
             return ResponseEntity.ok()
-
                     .contentType(
                             MediaType.parseMediaType(contentType)
                     )
-
                     .header(
                             HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=\""
-                                    + resource.getFilename()
-                                    + "\""
+                            "inline; filename=\"" +
+                            resource.getFilename() + "\""
                     )
-
                     .body(resource);
 
         } catch (Exception e) {
@@ -223,4 +248,29 @@ public class CourseContentController {
                     .build();
         }
     }
-}
+    // =========================
+    // DELETE CONTENT
+    // =========================
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteContent(
+            @PathVariable String id) {
+
+        service.deleteContent(id);
+
+        return ResponseEntity.ok(
+                "Content Deleted Successfully"
+        );
+    }
+
+ // =========================
+    // TEST COURSE CONTENT
+    // =========================
+    @GetMapping("/test/{courseId}")
+    public List<CourseContent> test(
+            @PathVariable String courseId) {
+
+        return service.getByCourseId(courseId);
+    }
+
+    }
+

@@ -12,19 +12,23 @@ public class Course {
     private String title;
     private String description;
     private String instructor;
+    private String category;
+    private String imageUrl;
     private double price;
 
     public Course() {
     }
 
     public Course(String id, String title, String description,
-                  String instructor, double price) {
+                  String instructor, String imageUrl, double price, String category) {
 
         this.id = id;
         this.title = title;
         this.description = description;
         this.instructor = instructor;
+        this.category = category;
         this.price = price;
+        this.imageUrl = imageUrl;
     }
 
     public String getId() {
@@ -66,4 +70,20 @@ public class Course {
     public void setPrice(double price) {
         this.price = price;
     }
-}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+} 

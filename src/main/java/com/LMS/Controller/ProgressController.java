@@ -4,7 +4,14 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.LMS.Entity.Progress;
 import com.LMS.Service.ProgressService;
@@ -18,14 +25,14 @@ public class ProgressController {
 
     private final ProgressService service;
 
-    // ✅ ADD PROGRESS
+    //  ADD PROGRESS
     @PostMapping
     public Progress addProgress(@RequestBody Progress progress) {
 
         return service.addProgress(progress);
     }
 
-    // ✅ GET MY PROGRESS
+    //  GET MY PROGRESS
     @GetMapping("/my-progress")
     public List<Progress> myProgress() {
 
@@ -37,7 +44,7 @@ public class ProgressController {
         return service.getMyProgress(email);
     }
 
-    // ✅ UPDATE PROGRESS BY ID
+    //  UPDATE PROGRESS BY ID
     @PutMapping("/{id}")
     public Progress updateProgress(
             @PathVariable String id,
@@ -46,14 +53,14 @@ public class ProgressController {
         return service.updateProgress(id, progress);
     }
 
-    // ✅ AUTO UPDATE USING JWT
+    //  AUTO UPDATE USING JWT
     @PostMapping("/update")
     public ResponseEntity<?> update(
             @RequestParam String courseId) {
 
         try {
 
-            // 🔐 DEBUG
+            //  DEBUG
             System.out.println(
                     "USER: " +
                     SecurityContextHolder
@@ -61,7 +68,7 @@ public class ProgressController {
                             .getAuthentication()
             );
 
-            // ✅ EMAIL FROM JWT
+            //  EMAIL FROM JWT
             String email = SecurityContextHolder
                     .getContext()
                     .getAuthentication()
@@ -79,4 +86,4 @@ public class ProgressController {
                     .body(e.getMessage());
         }
     }
-} 
+}

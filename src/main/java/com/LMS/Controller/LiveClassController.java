@@ -1,7 +1,7 @@
 package com.LMS.Controller;
 
-import java.util.List;
-
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.LMS.Entity.LiveClass;
@@ -9,37 +9,66 @@ import com.LMS.Service.LiveClassService;
 
 import lombok.RequiredArgsConstructor;
 
-@RestController
-@RequestMapping("/live")
+@Controller
+@RequestMapping("/admin/liveclasses")
 @RequiredArgsConstructor
 public class LiveClassController {
 
-    private final LiveClassService service;
+    private final LiveClassService liveClassService;
 
-    // ADMIN CREATE LIVE CLASS
-    @PostMapping("/create")
-    public LiveClass create(
-            @RequestBody LiveClass liveClass) {
+    // List
+    @GetMapping("")
+    public String list(Model model) {
 
-        return service.create(
-                liveClass
-        );
+        model.addAttribute(
+                "liveClasses",
+                liveClassService.getAll());
+
+        return "admin/liveclass-list";
     }
 
-    // GET ALL LIVE CLASSES
-    @GetMapping("/all")
-    public List<LiveClass> getAll() {
+    // Add Page
+    @GetMapping("/add")
+    public String addPage(Model model) {
 
-        return service.getAll();
+        model.addAttribute(
+                "liveClass",
+                new LiveClass());
+
+        return "admin/add-liveclass";
     }
 
-    // GET COURSE LIVE CLASSES
-    @GetMapping("/course/{courseId}")
-    public List<LiveClass> getByCourse(
-            @PathVariable String courseId) {
+    // Save
+    @PostMapping("/save")
+    public String save(
+            @ModelAttribute LiveClass liveClass) {
 
-        return service.getByCourse(
-                courseId
-        );
+        liveClassService.save(liveClass);
+
+        return "redirect:/admin/liveclasses";
     }
+
+    // Delete
+    @GetMapping("/delete/{id}")
+    public String delete(
+            @PathVariable String id) {
+
+        liveClassService.delete(id);
+
+        return "redirect:/admin/liveclasses";
+    }
+
+    // Edit
+    @GetMapping("/edit/{id}")
+    public String edit(
+            @PathVariable String id,
+            Model model) {
+
+        model.addAttribute(
+                "liveClass",
+                liveClassService.getById(id));
+
+        return "admin/add-liveclass";
+    }
+
 }

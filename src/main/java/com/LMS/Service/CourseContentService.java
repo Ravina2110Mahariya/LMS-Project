@@ -5,10 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.LMS.Entity.CourseContent;
-import com.LMS.Entity.User;
 import com.LMS.Repository.CourseContentRepository;
-import com.LMS.Repository.EnrollmentRepository;
-import com.LMS.Repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,33 +13,48 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CourseContentService {
 
-    private final CourseContentRepository contentRepo;
-    private final EnrollmentRepository enrollmentRepo;
-    private final UserRepository userRepo;
+    private final CourseContentRepository repository;
 
-    // ✅ ADD CONTENT (FINAL FIX)
-    public CourseContent addContent(CourseContent c) {
+    // =========================
+    // ADMIN
+    // =========================
 
-        // safety check (optional but recommended)
-        if (c.getFileName() == null) {
-            throw new RuntimeException("File name is missing");
-        }
-
-        return contentRepo.save(c);
+    public List<CourseContent> getAll() {
+        return repository.findAll();
     }
 
-    // ✅ SECURE CONTENT (ENROLLMENT CHECK)
+    public CourseContent save(CourseContent content) {
+        return repository.save(content);
+    }
+
+    public CourseContent getById(String id) {
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Course Content Not Found"));
+    }
+
+    public void delete(String id) {
+        repository.deleteById(id);
+    }
+
+    // =========================
+    // STUDENT
+    // =========================
+
+    public CourseContent addContent(CourseContent content) {
+        return repository.save(content);
+    }
+
     public List<CourseContent> getContent(String courseId, String email) {
+        // Future me enrollment check kar sakte ho
+        return repository.findByCourseId(courseId);
+    }
 
-        // 1. user find
-        User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public void deleteContent(String id) {
+        repository.deleteById(id);
+    }
 
-        // 2. enrollment check
-        enrollmentRepo.findByUserIdAndCourseId(user.getId(), courseId)
-                .orElseThrow(() -> new RuntimeException("You are not enrolled in this course"));
-
-        // 3. return content
-        return contentRepo.findByCourseId(courseId);
+    public List<CourseContent> getByCourseId(String courseId) {
+        return repository.findByCourseId(courseId);
     }
 }

@@ -1,86 +1,98 @@
 package com.LMS.Controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.LMS.Entity.Certificate;
 import com.LMS.Service.CertificateService;
 
 import lombok.RequiredArgsConstructor;
 
-@RestController
+@Controller
 @RequestMapping("/certificate")
 @RequiredArgsConstructor
 public class CertificateController {
 
-    private final CertificateService service;
+    private final CertificateService certificateService;
 
-    // ✅ DOWNLOAD CERTIFICATE
+    // =========================
+    // DOWNLOAD CERTIFICATE PDF
+    // =========================
     @GetMapping("/download")
-    public ResponseEntity<?> downloadCertificate(
+    public ResponseEntity<byte[]> downloadCertificate(
             @RequestParam String courseId) {
-
-        try {
-
-            // ✅ DEBUG
-            System.out.println(
-                    "USER: " +
-                    SecurityContextHolder
-                            .getContext()
-                            .getAuthentication()
-            );
-
-            // ✅ EMAIL FROM JWT
-            String email = SecurityContextHolder
-                    .getContext()
-                    .getAuthentication()
-                    .getName();
-
-            // ✅ GENERATE CERTIFICATE
-            byte[] pdf =
-                    service.generateCertificate(
-                            email,
-                            courseId
-                    );
-
-            // ✅ RETURN FILE
-            return ResponseEntity.ok()
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=certificate.txt"
-                    )
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body(pdf);
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity
-                    .badRequest()
-                    .body(e.getMessage());
-        }
-    }
-
-    // ✅ MY CERTIFICATES
-    @GetMapping("/my-certificates")
-    public List<Certificate> myCertificates() {
 
         String email = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getName();
 
-        return service.myCertificates(email);
+        byte[] pdf =
+                certificateService.generateCertificate(
+                        email,
+                        courseId);
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=LMS_Certificate.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 
-    // ✅ TEST API
-    @GetMapping("/test")
-    public String test() {
+    // =========================
+    // GENERATE CERTIFICATE
+    // =========================
+    @GetMapping("/student/generate-certificate/{courseId}")
+    public String generateCertificate(
+            @PathVariable String courseId,
+            Principal principal) {
 
-        return "Certificate API Working";
+        certificateService.generateCertificate(
+                principal.getName(),
+                courseId);
+
+        return "redirect:/student/certificates";
+    }
+
+    // =========================
+    // MY CERTIFICATES PAGE
+    // =========================
+    @GetMapping("/student/certificates")
+    public String certificates(
+            org.springframework.ui.Model model,
+            Principal principal) {
+
+        model.addAttribute(
+                "certificates",
+                certificateService.myCertificates(
+                        principal.getName()));
+
+        return "student/certificates";
+    }
+
+    // =========================
+    // CERTIFICATES API
+    // =========================
+    @GetMapping("/my-certificates")
+    public ResponseEntity<List<Certificate>> myCertificates() {
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        return ResponseEntity.ok(
+                certificateService.myCertificates(email));
     }
 }

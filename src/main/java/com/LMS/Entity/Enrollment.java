@@ -15,7 +15,7 @@ public class Enrollment {
     private String courseId;
     private String status;
     private String studentEmail;
-    
+
 	public String getUserId() {
 		return userId;
 	}
@@ -44,7 +44,7 @@ public class Enrollment {
         this.studentEmail =
                 studentEmail;
     }
-	
+
 
     // getters setters
 }

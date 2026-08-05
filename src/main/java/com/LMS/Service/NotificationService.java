@@ -15,23 +15,49 @@ public class NotificationService {
 
     private final NotificationRepository repo;
 
-    // SEND NOTIFICATION
-    public Notification send(
-            Notification notification) {
-
+    // =========================
+    // SAVE / SEND NOTIFICATION
+    // =========================
+    public Notification save(Notification notification) {
         return repo.save(notification);
     }
 
-    // MY NOTIFICATIONS
-    public List<Notification> myNotifications(
-            String email) {
-
-        return repo.findByStudentEmail(email);
+    public Notification send(Notification notification) {
+        return repo.save(notification);
     }
 
-    // ALL NOTIFICATIONS
-    public List<Notification> all() {
-
+    // =========================
+    // GET ALL NOTIFICATIONS
+    // =========================
+    public List<Notification> getAll() {
         return repo.findAll();
+    }
+
+    public List<Notification> all() {
+        return repo.findAll();
+    }
+
+    // =========================
+    // GET BY ID
+    // =========================
+    public Notification getById(String id) {
+
+        return repo.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Notification Not Found"));
+    }
+
+    // =========================
+    // DELETE
+    // =========================
+    public void delete(String id) {
+        repo.deleteById(id);
+    }
+
+    // =========================
+    // STUDENT NOTIFICATIONS
+    // =========================
+    public List<Notification> myNotifications(String email) {
+        return repo.findByStudentEmail(email);
     }
 }

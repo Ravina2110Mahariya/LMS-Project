@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Course Content</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container-fluid">
+
+<div class="row">
+
+<div class="col-md-3 mt-3"
+th:replace="fragments/admin-sidebar :: adminSidebar">
+</div>
+
+<div class="col-md-9 mt-3">
+
+<div class="card shadow">
+
+<div class="card-header bg-primary text-white d-flex justify-content-between">
+
+<h4>Course Content</h4>
+
+<a th:href="@{/admin/course-content/add}"
+class="btn btn-light btn-sm">
+
++ Add Content
+
+</a>
+
+</div>
+
+<div class="card-body">
+
+<table class="table table-bordered table-hover">
+
+<thead class="table-dark">
+
+<tr>
+
+<th>Title</th>
+
+<th>Course ID</th>
+
+<th>Type</th>
+
+<th>Video</th>
+
+<th>Drive</th>
+
+<th>File</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr th:each="c : ${contents}">
+
+<td th:text="${c.title}"></td>
+
+<td th:text="${c.courseId}"></td>
+
+<td th:text="${c.type}"></td>
+
+<td>
+
+<a th:if="${c.videoUrl!=null}"
+th:href="${c.videoUrl}"
+target="_blank">
+
+Open
+
+</a>
+
+</td>
+
+<td>
+
+<a th:if="${c.driveUrl!=null}"
+th:href="${c.driveUrl}"
+target="_blank">
+
+Open
+
+</a>
+
+</td>
+
+<td>
+
+<a th:if="${c.fileUrl!=null}"
+th:href="${c.fileUrl}"
+target="_blank">
+
+Download
+
+</a>
+
+</td>
+
+<td>
+
+<a th:href="@{/admin/course-content/edit/{id}(id=${c.id})}"
+class="btn btn-warning btn-sm">
+
+Edit
+
+</a>
+
+<a th:href="@{/admin/course-content/delete/{id}(id=${c.id})}"
+class="btn btn-danger btn-sm"
+onclick="return confirm('Delete Content?')">
+
+Delete
+
+</a>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

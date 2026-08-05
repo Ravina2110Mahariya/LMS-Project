@@ -25,6 +25,44 @@ public class DiscussionService {
     }
 
     // =========================
+    // SAVE (ADMIN)
+    // =========================
+    public Discussion save(
+            Discussion discussion) {
+
+        return repo.save(discussion);
+    }
+
+    // =========================
+    // GET ALL
+    // =========================
+    public List<Discussion> getAll() {
+
+        return repo.findAll();
+    }
+
+    // =========================
+    // GET BY ID
+    // =========================
+    public Discussion getById(
+            String id) {
+
+        return repo.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Discussion Not Found"));
+    }
+
+    // =========================
+    // DELETE
+    // =========================
+    public void delete(
+            String id) {
+
+        repo.deleteById(id);
+    }
+
+    // =========================
     // GET QUESTIONS BY COURSE
     // =========================
     public List<Discussion> getByCourse(
@@ -43,14 +81,6 @@ public class DiscussionService {
     }
 
     // =========================
-    // GET ALL QUESTIONS
-    // =========================
-    public List<Discussion> getAll() {
-
-        return repo.findAll();
-    }
-
-    // =========================
     // ADMIN REPLY
     // =========================
     public Discussion reply(
@@ -58,13 +88,9 @@ public class DiscussionService {
             String reply,
             String admin) {
 
-        Discussion d = repo.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Question not found"));
+        Discussion d = getById(id);
 
         d.setReply(reply);
-
         d.setRepliedBy(admin);
 
         return repo.save(d);

@@ -1,18 +1,18 @@
 package com.LMS.Controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api/student")
+import com.LMS.Service.CourseContentService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/student")
+@RequiredArgsConstructor
 public class StudentController {
 
-    @PreAuthorize("hasRole('STUDENT')")
-    @GetMapping("/student/dashboard")
-    public String studentDashboard() {
+    private final CourseContentService contentService;
 
-        return "Student Dashboard";
-    }
+
 }

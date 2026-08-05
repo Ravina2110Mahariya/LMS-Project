@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Submit Assignment</title>
+</head>
+<body>
+
+<h2>Submit Assignment</h2>
+
+<form th:action="@{/submit-assignment}" method="post">
+
+    <input type="hidden"
+           name="assignmentId"
+           th:value="${assignmentId}">
+
+    <textarea name="answer"
+              rows="8"
+              cols="50"
+              placeholder="Write your answer here"></textarea>
+
+    <br><br>
+
+    <button type="submit">
+        Submit
+    </button>
+
+</form>
+
+</body>
+</html>

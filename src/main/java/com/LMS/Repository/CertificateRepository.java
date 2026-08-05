@@ -7,9 +7,12 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import com.LMS.Entity.Certificate;
 
 public interface CertificateRepository
-        extends MongoRepository<Certificate, String> {
+extends MongoRepository<Certificate, String> {
 
-    List<Certificate> findByStudentEmail(
-            String studentEmail
-    );
+List<Certificate> findByStudentEmail(
+    String studentEmail);
+
+List<Certificate> findByStudentEmailAndCourseId(
+    String studentEmail,
+    String courseId);
 }

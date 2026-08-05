@@ -10,10 +10,12 @@ import com.LMS.Entity.Progress;
 public interface ProgressRepository
         extends MongoRepository<Progress, String> {
 
-    // ✅ FIND BY USER ID
+    //  FIND BY USER ID
     List<Progress> findByUserId(String userId);
+    
+    List<Progress> findByStudentEmail(String studentEmail);
 
-    // ✅ FIND BY USER ID + COURSE ID
+    //  FIND BY USER ID + COURSE ID
     Optional<Progress> findByUserIdAndCourseId(
             String userId,
             String courseId

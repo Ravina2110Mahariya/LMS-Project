@@ -32,7 +32,7 @@ protected void doFilterInternal(HttpServletRequest request,
 
     String path = request.getServletPath();
 
-    // ✅ PUBLIC URLS
+    //  PUBLIC URLS
     if (path.startsWith("/auth") || path.startsWith("/uploads")) {
         filterChain.doFilter(request, response);
         return;
@@ -44,10 +44,10 @@ protected void doFilterInternal(HttpServletRequest request,
 
     try {
 
-        // ✅ DEBUG
+        //  DEBUG
         System.out.println("🔐 AUTH HEADER: " + authHeader);
 
-        // ✅ Extract Token
+        //  Extract Token
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
 
             token = authHeader.substring(7);
@@ -58,7 +58,7 @@ protected void doFilterInternal(HttpServletRequest request,
             System.out.println(" EMAIL: " + email);
         }
 
-        // ✅ Validate Token
+        //  Validate Token
         if (email != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
 
@@ -105,7 +105,7 @@ protected void doFilterInternal(HttpServletRequest request,
         System.out.println(" JWT ERROR: " + e.getMessage());
     }
 
-    // ✅ Continue Filter Chain
+    //  Continue Filter Chain
     filterChain.doFilter(request, response);
 }
 

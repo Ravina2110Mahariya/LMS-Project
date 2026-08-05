@@ -4,16 +4,21 @@ import lombok.Data;
 
 @Data
 public class StudentDashboardDTO {
+	private String student;
 
-    private String student;
+	private long totalCourses;
 
-    private long enrolledCourses;
+	private long enrolledCourses;
+	
+	private long totalAssignments;
+	
+	private long totalCertificates;
 
-    private long completedCourses;
+	private long notifications;
 
-    private long certificates;
+	private long submissions;
 
-    private long notifications;
+	private long completedCourses;
 
-    private long submissions;
-}
+	private long liveClasses;
+    }

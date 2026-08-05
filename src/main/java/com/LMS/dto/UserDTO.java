@@ -16,7 +16,7 @@ public class UserDTO {
         this.email = email;
         this.role = role;
     }
-    
+
     // Getters & Setters
     public String getId() {
         return id;

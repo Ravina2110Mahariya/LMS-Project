@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -109,6 +110,17 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    // ================= CLIENT DISCONNECT =================
+
+    @ExceptionHandler(AsyncRequestNotUsableException.class)
+    public void handleAsyncDisconnect(
+            AsyncRequestNotUsableException ex) {
+
+        System.out.println(
+                "Client disconnected while downloading/streaming file."
+        );
+    }
+
     // ================= RUNTIME =================
 
     @ExceptionHandler(RuntimeException.class)
@@ -129,9 +141,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleException(
             Exception ex) {
 
+        // Ignore browser disconnect errors
+        if (ex.getClass().getName()
+                .contains("ClientAbortException")) {
+
+            System.out.println(
+                    "Client disconnected while downloading file."
+            );
+
+            return ResponseEntity.ok().build();
+        }
+
+        ex.printStackTrace();
+
         return new ResponseEntity<>(
                 new ErrorResponse(
-                        "Something went wrong",
+                        ex.getMessage(),
                         500
                 ),
                 HttpStatus.INTERNAL_SERVER_ERROR);

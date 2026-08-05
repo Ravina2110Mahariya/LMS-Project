@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Course Chat</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container-fluid">
+
+<div class="row">
+
+<div class="col-md-3 mt-3">
+<div th:replace="~{fragments/student-sidebar :: studentSidebar}"></div>
+</div>
+
+<div class="col-md-9 mt-3">
+
+<h2>Course Discussion</h2>
+
+<div class="card">
+
+<div class="card-body"
+     style="height:400px;overflow-y:auto;">
+
+<div th:each="msg : ${messages}"
+     class="mb-3">
+
+<b th:text="${msg.sender}"></b>
+
+<p th:text="${msg.message}"></p>
+
+<hr>
+
+</div>
+
+</div>
+
+</div>
+
+<form th:action="@{/student/chat/send}"
+      method="post"
+      class="mt-3">
+
+	  <input type="hidden"
+	         name="courseId"
+	         th:value="${courseId}">
+
+<textarea name="message"
+          class="form-control"
+          rows="3"
+          required></textarea>
+
+<button type="submit"
+        class="btn btn-primary mt-2">
+
+Send
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -13,27 +13,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LiveClassService {
 
-    private final LiveClassRepository repo;
+    private final LiveClassRepository repository;
 
-    // CREATE LIVE CLASS
-    public LiveClass create(
-            LiveClass liveClass) {
-
-        return repo.save(liveClass);
+    public LiveClass save(LiveClass liveClass) {
+        return repository.save(liveClass);
     }
 
-    // ALL LIVE CLASSES
     public List<LiveClass> getAll() {
-
-        return repo.findAll();
+        return repository.findAll();
     }
 
-    // COURSE LIVE CLASSES
-    public List<LiveClass> getByCourse(
-            String courseId) {
+    public LiveClass getById(String id) {
+        return repository.findById(id).orElse(null);
+    }
 
-        return repo.findByCourseId(
-                courseId
-        );
+    public void delete(String id) {
+        repository.deleteById(id);
     }
 }

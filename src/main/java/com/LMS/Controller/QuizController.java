@@ -5,7 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.LMS.Entity.Quiz;
 import com.LMS.Repository.QuizRepository;
@@ -106,11 +112,11 @@ public class QuizController {
 
         return ResponseEntity.ok(response);
     }
-    
- // =========================
+
+     // =========================
     // QUIZ my-result
     // =========================
-    
+
     @GetMapping("/my-result")
     public ResponseEntity<?> myResult() {
 
@@ -119,7 +125,7 @@ public class QuizController {
 
         result.put("student", "ravina@gmail.com");
         result.put("score", 1);
-        result.put("status", "PASS ✅");
+        result.put("status", "PASS ");
 
         return ResponseEntity.ok(result);
     }

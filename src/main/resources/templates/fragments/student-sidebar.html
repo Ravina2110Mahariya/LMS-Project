@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<div th:fragment="studentSidebar">
+
+	    <div class="card shadow-sm">
+
+	        <div class="card-header bg-primary text-white">
+	            <h5 class="mb-0">Student Panel</h5>
+	        </div>
+
+	        <div class="list-group list-group-flush">
+
+	            <a th:href="@{/student/dashboard}"
+	               class="list-group-item list-group-item-action">
+	                🏠 Dashboard
+	            </a>
+
+	            <a th:href="@{/student/courses}"
+	               class="list-group-item list-group-item-action">
+	                📚 My Courses
+	            </a>
+
+	            <a th:href="@{/student/assignments}"
+	               class="list-group-item list-group-item-action">
+	                📝 Assignments
+	            </a>
+
+	            <a th:href="@{/student/quizzes}"
+	               class="list-group-item list-group-item-action">
+	                ❓ Quizzes
+	            </a>
+
+	            <a th:href="@{/student/progress}"
+	               class="list-group-item list-group-item-action">
+	                📈 Progress
+	            </a>
+
+				<a th:href="@{/student/attendance}"
+				   class="list-group-item list-group-item-action">
+				    📅 Attendance
+				</a>
+
+	            <a th:href="@{/student/certificates}"
+	               class="list-group-item list-group-item-action">
+	                🎓 Certificates
+	            </a>
+
+	            <a th:href="@{/student/live-classes}"
+	               class="list-group-item list-group-item-action">
+	                🎥 Live Classes
+	            </a>
+
+	            <a th:href="@{/student/notifications}"
+	               class="list-group-item list-group-item-action">
+	                🔔 Notifications
+	            </a>
+
+	            <a th:href="@{/student/reviews}"
+	               class="list-group-item list-group-item-action">
+	                ⭐ Reviews
+	            </a>
+
+	            <a th:href="@{/student/discussions}"
+	               class="list-group-item list-group-item-action">
+	                💬 Discussions
+	            </a>
+
+	            <a th:href="@{/student/my-submissions}"
+	               class="list-group-item list-group-item-action">
+	                📂 My Submissions
+	            </a>
+				
+				<a th:href="@{/student/announcements}"
+				class="list-group-item list-group-item-action">
+
+				📢 Announcements
+
+				</a>
+				
+				<a th:href="@{/student/videos}"
+				class="list-group-item list-group-item-action">
+
+				🎥 Video Lectures
+
+				</a>
+
+	            <a th:href="@{/logout}"
+	               class="list-group-item list-group-item-action text-danger">
+	                🚪 Logout
+	            </a>
+
+	        </div>
+
+	    </div>
+
+	</div>
+</body>
+</html>
+

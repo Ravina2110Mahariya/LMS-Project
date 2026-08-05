@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Add Discussion</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container mt-4">
+
+<h2 class="mb-4">Discussion Form</h2>
+
+<form th:action="@{/admin/discussions/save}"
+th:object="${discussion}"
+method="post">
+
+<input type="hidden" th:field="*{id}">
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Course ID
+
+</label>
+
+<input type="text"
+class="form-control"
+th:field="*{courseId}"
+required>
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Student Email
+
+</label>
+
+<input type="email"
+class="form-control"
+th:field="*{studentEmail}"
+required>
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Question
+
+</label>
+
+<textarea class="form-control"
+rows="3"
+th:field="*{question}"
+required></textarea>
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Reply
+
+</label>
+
+<textarea class="form-control"
+rows="3"
+th:field="*{reply}"></textarea>
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Replied By
+
+</label>
+
+<input type="text"
+class="form-control"
+th:field="*{repliedBy}">
+
+</div>
+
+<button type="submit"
+class="btn btn-success">
+
+Save
+
+</button>
+
+<a th:href="@{/admin/discussions}"
+class="btn btn-secondary">
+
+Back
+
+</a>
+
+</form>
+
+</div>
+
+</body>
+
+</html>

@@ -3,44 +3,46 @@ package com.LMS.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.LMS.Entity.Enrollment;
 import com.LMS.Service.EnrollmentService;
 import com.LMS.dto.EnrollmentDTO;
 
-@RestController
+@Controller
 @RequestMapping("/enroll")
 public class EnrollmentController {
 
     @Autowired
     private EnrollmentService service;
 
-    // ✅ ENROLL COURSE
-    // STUDENT + ADMIN
+    // =========================
+    // ENROLL COURSE
+    // =========================
     @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
     @PostMapping
-    public ResponseEntity<?> enroll(@RequestBody Enrollment e) {
+    public String enroll(
+            @RequestParam String courseId) {
 
-        try {
+        Enrollment e = new Enrollment();
+        e.setCourseId(courseId);
 
-            return ResponseEntity.ok(
-                    service.enroll(e)
-            );
+        service.enroll(e);
 
-        } catch (RuntimeException ex) {
-
-            return ResponseEntity
-                    .badRequest()
-                    .body(ex.getMessage());
-        }
+        return "redirect:/student/my-courses";
     }
 
-    // ✅ GET MY COURSES
-    // STUDENT + ADMIN
+    // =========================
+    // MY COURSES API
+    // =========================
+    @ResponseBody
     @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
     @GetMapping("/my-courses")
     public List<EnrollmentDTO> getMyCourses() {

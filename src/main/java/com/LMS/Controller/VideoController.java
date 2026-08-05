@@ -1,10 +1,9 @@
 package com.LMS.Controller;
 
-import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.LMS.Entity.VideoLecture;
 import com.LMS.Service.VideoService;
@@ -16,37 +15,61 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VideoController {
 
-    private final VideoService service;
+    private final VideoService videoService;
 
-    // UPLOAD VIDEO
-    @PostMapping("/upload")
-    public VideoLecture upload(
+    // =========================
+    // ADD VIDEO
+    // =========================
+    @PostMapping("/add")
+    public ResponseEntity<VideoLecture> addVideo(
+            @RequestBody VideoLecture video) {
 
-            @RequestParam String title,
-
-            @RequestParam String courseId,
-
-            @RequestParam String uploadedBy,
-
-            @RequestParam MultipartFile file)
-
-            throws IOException {
-
-        return service.upload(
-                title,
-                courseId,
-                uploadedBy,
-                file
-        );
+        return ResponseEntity.ok(
+                videoService.save(video));
     }
 
-    // GET COURSE VIDEOS
+    // =========================
+    // GET ALL VIDEOS
+    // =========================
+    @GetMapping("/all")
+    public ResponseEntity<List<VideoLecture>> getAllVideos() {
+
+        return ResponseEntity.ok(
+                videoService.getAll());
+    }
+
+    // =========================
+    // GET VIDEOS BY COURSE
+    // =========================
     @GetMapping("/course/{courseId}")
-    public List<VideoLecture> getVideos(
+    public ResponseEntity<List<VideoLecture>> getVideosByCourse(
             @PathVariable String courseId) {
 
-        return service.getByCourse(
-                courseId
-        );
+        return ResponseEntity.ok(
+                videoService.getByCourse(courseId));
     }
+
+    // =========================
+    // GET VIDEO BY ID
+    // =========================
+    @GetMapping("/{id}")
+    public ResponseEntity<VideoLecture> getVideoById(
+            @PathVariable String id) {
+
+        return ResponseEntity.ok(
+                videoService.getById(id));
+    }
+
+    // =========================
+    // DELETE VIDEO
+    // =========================
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteVideo(
+            @PathVariable String id) {
+
+        videoService.delete(id);
+
+        return ResponseEntity.ok("Video Deleted Successfully");
+    }
+
 }

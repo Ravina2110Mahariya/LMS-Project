@@ -21,9 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class EnrollmentService {
 
     private final EnrollmentRepository repo;
-
     private final CourseRepository courseRepo;
-
     private final UserRepository userRepo;
 
     // =========================
@@ -39,48 +37,26 @@ public class EnrollmentService {
         String email = auth.getName();
 
         User user = userRepo.findByEmail(email)
-
                 .orElseThrow(() ->
-                        new RuntimeException(
-                                "User not found"
-                        ));
+                        new RuntimeException("User not found"));
 
-        // =========================
-        // SET USER ID
-        // =========================
-        e.setUserId(user.getId());
-
-        // =========================
-        // SET STUDENT EMAIL
-        // =========================
-        e.setStudentEmail(email);
-
-        // =========================
-        // ALREADY ENROLLED CHECK
-        // =========================
         repo.findByUserIdAndCourseId(
-                e.getUserId(),
-                e.getCourseId()
-        ).ifPresent(en -> {
+                user.getId(),
+                e.getCourseId())
+                .ifPresent(en -> {
+                    throw new RuntimeException(
+                            "Already enrolled in this course");
+                });
 
-            throw new RuntimeException(
-                    "You are already enrolled in this course"
-            );
-        });
-
-        // =========================
-        // STATUS
-        // =========================
+        e.setUserId(user.getId());
+        e.setStudentEmail(email);
         e.setStatus("ENROLLED");
 
-        // =========================
-        // SAVE
-        // =========================
         return repo.save(e);
     }
 
     // =========================
-    // USER ENROLLMENTS
+    // GET USER ENROLLMENTS
     // =========================
     public List<Enrollment> getUserEnrollments(
             String userId) {
@@ -88,51 +64,89 @@ public class EnrollmentService {
         return repo.findByUserId(userId);
     }
 
-    // =========================
-    // MY COURSES
-    // =========================
-    public List<EnrollmentDTO> getMyCourses(
-            String userId) {
+        // =========================
+        // MY COURSES BY EMAIL
+        // =========================
+    public List<EnrollmentDTO> getMyCoursesByEmail(String email) {
+
+        System.out.println("EMAIL = " + email);
 
         List<Enrollment> enrollments =
-                repo.findByUserId(userId);
+                repo.findByStudentEmail(email);
 
-        return enrollments.stream().map(e -> {
+        System.out.println("TOTAL ENROLLMENTS = "
+                + enrollments.size());
 
-            Course c =
-                    courseRepo.findById(
-                            e.getCourseId()
-                    )
+        List<EnrollmentDTO> list = enrollments.stream()
+                .map(e -> {
 
-                    .orElseThrow(() ->
-                            new RuntimeException(
-                                    "Course not found"
-                            ));
+                    System.out.println(
+                            "COURSE ID = "
+                                    + e.getCourseId());
 
-            return new EnrollmentDTO(
+                    Course course =
+                            courseRepo.findById(
+                                    e.getCourseId())
+                                    .orElse(null);
 
-                    c.getTitle(),
-                    c.getDescription(),
-                    e.getStatus()
+                    System.out.println(
+                            "COURSE = "
+                                    + course);
 
-            );
+                    if (course == null) {
+                        return null;
+                    }
 
-        }).toList();
+                    return new EnrollmentDTO(
+                            course.getId(),
+                            course.getTitle(),
+                            course.getDescription(),
+                            course.getCategory(),
+                            e.getStatus()
+                    );
+
+                })
+                .filter(dto -> dto != null)
+                .toList();
+
+        System.out.println(
+                "DTO SIZE = "
+                        + list.size());
+
+        return list;
     }
+    
+ // =========================
+ // GET ALL ENROLLMENTS
+ // =========================
+ public List<Enrollment> getAll() {
 
-    // =========================
-    // JWT BASED
-    // =========================
-    public List<EnrollmentDTO> getMyCoursesByEmail(
-            String email) {
+     return repo.findAll();
+ }
 
-        User user = userRepo.findByEmail(email)
+ // =========================
+ // GET BY ID
+ // =========================
+ public Enrollment getById(String id) {
 
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "User not found"
-                        ));
+     return repo.findById(id)
+             .orElseThrow(() ->
+                     new RuntimeException("Enrollment Not Found"));
+ }
 
-        return getMyCourses(user.getId());
-    }
+ // =========================
+ // SAVE
+ // =========================
+ public Enrollment save(Enrollment enrollment) {
+
+     return repo.save(enrollment);
+ }
+
+ // =========================
+ // DELETE
+ // =========================
+ public void delete(String id) {
+
+     repo.deleteById(id);
+ }
 }

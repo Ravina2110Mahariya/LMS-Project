@@ -10,11 +10,11 @@ import com.LMS.Entity.Review;
 public interface ReviewRepository extends MongoRepository<Review, String> {
 
     List<Review> findByCourseId(String courseId);
-    
- // Check existing review by student
+
+    List<Review> findByStudentEmail(String studentEmail);
+
     Optional<Review> findByCourseIdAndStudentEmail(
             String courseId,
             String studentEmail
     );
-
 }

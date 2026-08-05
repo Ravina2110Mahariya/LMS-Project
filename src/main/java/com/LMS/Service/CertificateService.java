@@ -1,10 +1,15 @@
 package com.LMS.Service;
 
-import java.nio.charset.StandardCharsets;
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.springframework.stereotype.Service;
 
 import com.LMS.Entity.Certificate;
@@ -19,124 +24,134 @@ import lombok.RequiredArgsConstructor;
 public class CertificateService {
 
     private final CertificateRepository certificateRepo;
-
     private final UserRepository userRepo;
 
     // =========================
-    // GENERATE CERTIFICATE
+    // GENERATE CERTIFICATE PDF
     // =========================
-    public byte[] generateCertificate(
+    public byte[] generateCertificate(String email, String courseId) {
 
-            String email,
-            String courseId
+        try {
 
-    ) {
+            User user = userRepo.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // =========================
-        // FIND USER
-        // =========================
-        User user = userRepo.findByEmail(email)
+            List<Certificate> certificates =
+                    certificateRepo.findByStudentEmailAndCourseId(email, courseId);
 
-                .orElseThrow(() ->
+            Certificate certificate =
+                    certificates.isEmpty() ? null : certificates.get(0);
 
-                        new RuntimeException(
-                                "User not found"
-                        )
-                );
+            if (certificate == null) {
 
-        // =========================
-        // CREATE CERTIFICATE
-        // =========================
-        Certificate certificate =
-                new Certificate();
+                certificate = new Certificate();
 
-        // =========================
-        // SET USER ID
-        // =========================
-        certificate.setUserId(
-                user.getId()
-        );
+                certificate.setUserId(user.getId());
+                certificate.setStudentEmail(email);
+                certificate.setCourseId(courseId);
 
-        // =========================
-        // SET STUDENT EMAIL
-        // =========================
-        certificate.setStudentEmail(
-                email
-        );
+                certificate.setCertificateNumber(
+                        "CERT-" + UUID.randomUUID().toString().substring(0, 8));
 
-        // =========================
-        // SET COURSE
-        // =========================
-        certificate.setCourseId(
-                courseId
-        );
+                certificate.setIssueDate(LocalDateTime.now().toString());
 
-        // =========================
-        // CERTIFICATE NUMBER
-        // =========================
-        certificate.setCertificateNumber(
+                certificateRepo.save(certificate);
+            }
 
-                "CERT-"
+            PDDocument document = new PDDocument();
+            PDPage page = new PDPage();
 
-                        + UUID.randomUUID()
-                        .toString()
-                        .substring(0, 8)
-        );
+            document.addPage(page);
 
-        // =========================
-        // DATE TIME
-        // =========================
-        certificate.setGeneratedAt(
-                LocalDateTime.now()
-        );
+            PDPageContentStream content =
+                    new PDPageContentStream(document, page);
 
-        // =========================
-        // SAVE
-        // =========================
-        certificateRepo.save(certificate);
+            content.beginText();
+            content.setFont(
+                    new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 24);
 
-        // =========================
-        // CONTENT
-        // =========================
-        String content =
+            content.newLineAtOffset(170, 720);
+            content.showText("LMS CERTIFICATE");
+            content.endText();
 
-                "===== LMS CERTIFICATE =====\n\n"
+            content.beginText();
+            content.setFont(
+                    new PDType1Font(Standard14Fonts.FontName.HELVETICA), 14);
 
-                + "Student: "
-                + user.getName()
-                + "\n"
+            content.newLineAtOffset(100, 650);
 
-                + "Email: "
-                + user.getEmail()
-                + "\n"
+            content.showText("This certifies that");
 
-                + "Course ID: "
-                + courseId
-                + "\n"
+            content.newLineAtOffset(0, -40);
+            content.showText("Student Name : " + user.getName());
 
-                + "Certificate No: "
-                + certificate.getCertificateNumber()
-                + "\n\n"
+            content.newLineAtOffset(0, -30);
+            content.showText("Email : " + user.getEmail());
 
-                + "Status: COMPLETED\n\n"
+            content.newLineAtOffset(0, -30);
+            content.showText("Course ID : " + courseId);
 
-                + "Congratulations!\n";
+            content.newLineAtOffset(0, -30);
+            content.showText("Certificate No : "
+                    + certificate.getCertificateNumber());
 
-        // =========================
-        // RETURN FILE
-        // =========================
-        return content.getBytes(
-                StandardCharsets.UTF_8
-        );
+            content.newLineAtOffset(0, -30);
+            content.showText("Issue Date : "
+                    + certificate.getIssueDate());
+
+            content.newLineAtOffset(0, -30);
+            content.showText("Status : COMPLETED");
+
+            content.endText();
+            content.close();
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            document.save(out);
+            document.close();
+
+            return out.toByteArray();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Certificate generation failed", e);
+        }
     }
 
     // =========================
-    // MY CERTIFICATES
+    // STUDENT CERTIFICATES
     // =========================
-    public List<Certificate> myCertificates(
-            String email) {
+    public List<Certificate> myCertificates(String email) {
+        return certificateRepo.findByStudentEmail(email);
+    }
 
-        return certificateRepo
-                .findByStudentEmail(email);
+    // =========================
+    // GET BY ID
+    // =========================
+    public Certificate getCertificateById(String id) {
+
+        return certificateRepo.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Certificate not found"));
+    }
+
+    // =========================
+    // ADMIN - GET ALL
+    // =========================
+    public List<Certificate> getAllCertificates() {
+        return certificateRepo.findAll();
+    }
+
+    // =========================
+    // ADMIN - SAVE
+    // =========================
+    public Certificate save(Certificate certificate) {
+        return certificateRepo.save(certificate);
+    }
+
+    // =========================
+    // ADMIN - DELETE
+    // =========================
+    public void delete(String id) {
+        certificateRepo.deleteById(id);
     }
 }

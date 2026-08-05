@@ -3,28 +3,32 @@ package com.LMS.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "quiz")
+@Document(collection = "quizzes")
 public class Quiz {
 
     @Id
     private String id;
-
+    
     private String courseId;
+
+    private String title;
 
     private String question;
 
-    private String option1;
+    private String optionA;
 
-    private String option2;
+    private String optionB;
 
-    private String option3;
+    private String optionC;
 
-    private String option4;
+    private String optionD;
 
     private String correctAnswer;
 }
