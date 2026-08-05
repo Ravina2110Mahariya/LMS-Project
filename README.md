@@ -6,25 +6,31 @@ A Learning Management System (LMS) built using Spring Boot and MongoDB.
 
 ## Features
 
-* JWT Authentication & Authorization
-* Role-Based Access (Admin / Student)
-* Course Management
-* Enrollment System
-* Assignment Submission
-* Quiz Management
-* Attendance Tracking
-* Progress Tracking
-* Live Classes
-* Course Content Upload
-* Video Upload
-* Notes Upload
-* Notifications
-* Certificate Generation
+* User Authentication (JWT + Spring Security)
+- Admin Dashboard
+- Student Dashboard
+- Instructor Dashboard
+- Course Management
+- Enrollment Management
+- Assignments
+- Quiz Module
+- Quiz Results
+- Progress Tracking
+- Attendance
+- Certificates
+- Reviews & Ratings
+- Discussions
+- Notes Upload
+- Video Upload
+- Live Classes
+- Notifications
+- Reports
+- File Upload
 * Swagger API Documentation
 
 ## Technology Stack
 
-* Java 17
+* Java 21
 * Spring Boot 3
 * Spring Security
 * JWT
@@ -37,7 +43,19 @@ A Learning Management System (LMS) built using Spring Boot and MongoDB.
 * rest-api
 * bootstrap
 * lms
+* Git & GitHub
 * learning-management-system
+
+## 📂 Project Structure
+src
+ ├── controller
+ ├── service
+ ├── repository
+ ├── entity
+ ├── dto
+ ├── config
+ └── templates
+
 
 
 ## API Documentation
@@ -56,3 +74,7 @@ mvn spring-boot:run
 ## Author
 
 Ravina Mahariya
+
+https://github.com/Ravina2110Mahariya
+
+https://www.linkedin.com/in/ravina-mahariya-863b64271/
