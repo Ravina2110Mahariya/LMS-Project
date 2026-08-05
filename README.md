@@ -46,7 +46,7 @@ A Learning Management System (LMS) built using Spring Boot and MongoDB.
 * Git & GitHub
 * learning-management-system
 
-## 📂 Project Structure
+```
 src
  ├── controller
  ├── service
@@ -55,6 +55,8 @@ src
  ├── dto
  ├── config
  └── templates
+```
+
 
 
 
